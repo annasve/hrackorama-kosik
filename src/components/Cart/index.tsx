@@ -1,42 +1,19 @@
-import { useState } from 'react';
-import IProduct from '../../models/Product';
 import CartItem from '../CartItem';
 import './style.css';
+import IProduct from '../../models/Product';
 
-const products: IProduct[] = [
-  {
-    name: 'Hrad z kostek',
-    price: 450,
-    amount: 2,
-  },
-  {
-    name: 'Autíčko na ovládání',
-    price: 1500,
-    amount: 1,
-  },
-  {
-    name: 'Domeček pro panenky',
-    price: 1350,
-    amount: 1,
-  },
-  {
-    name: 'Dětský telefon',
-    price: 730,
-    amount: 1,
-  },
-];
+//(alternativa k přesunutí products do samostatné složky: udělat odsud nějaký callback, který by posílal tu cenu a amount do App)
 
-const Cart = () => {
-  const [cartProducts, setCartProducts] = useState(products);
+interface CartProps {
+  products: IProduct[];
+  onAmountChange: (index: number, amount: number) => void;
+}
 
-  const handleAmountChange = (index: number, amount: number) => {
-    const newProducts = [...cartProducts];
-    newProducts[index].amount = amount;
-    setCartProducts(newProducts);
-  };
-
+const Cart: React.FC<CartProps> = ({ products, onAmountChange }) => {
   let itemsCount = 0;
-  cartProducts.forEach((product) => (itemsCount += product.amount));
+  products.forEach((product) => (itemsCount += product.amount));
+  //alternativní způsob výpočtu itemsCount:
+  // const itemsCount = cartProducts.map(p => p.amount).reduce((prev, cur) => prev+cur, 0)
 
   return (
     <div className="cart">
@@ -49,7 +26,7 @@ const Cart = () => {
           <CartItem
             product={product}
             key={product.name}
-            onAmountChange={(value) => handleAmountChange(index, value)}
+            onAmountChange={(value) => onAmountChange(index, value)}
           />
         ))}
       </div>
